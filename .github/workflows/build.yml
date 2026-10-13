@@ -1,0 +1,32 @@
+name: Compilar Portador (Linux)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    # Ubuntu 22.04 para que el binario funcione también en distros más viejas
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar Tkinter
+        run: sudo apt-get update && sudo apt-get install -y python3-tk
+
+      - name: Instalar PyInstaller
+        run: pip install pyinstaller
+
+      - name: Compilar
+        run: pyinstaller --onefile --windowed --name Portador portador.py
+
+      - name: Subir el binario
+        uses: actions/upload-artifact@v4
+        with:
+          name: Portador-Linux
+          path: dist/Portador
